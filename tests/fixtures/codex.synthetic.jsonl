@@ -1,0 +1,18 @@
+{"type":"thread.started","thread_id":"synthetic-codex"}
+{"type":"turn.started"}
+{"type":"item.started","item":{"id":"reason-1","type":"reasoning","text":"PRIVATE_REASONING_MARKER"}}
+{"type":"item.completed","item":{"id":"reason-1","type":"reasoning","text":"PRIVATE_REASONING_MARKER"}}
+{"type":"item.started","item":{"id":"cmd-1","type":"command_execution","command":"python -m pytest -q","status":"in_progress"}}
+diagnostic: synthetic malformed output
+{"type":"item.updated","item":{"id":"cmd-1","type":"command_execution","command":"python -m pytest -q","status":"in_progress","aggregated_output":"collecting"}}
+{"type":"item.completed","item":{"id":"cmd-1","type":"command_execution","command":"python -m pytest -q","status":"completed","exit_code":0,"aggregated_output":"1 passed"}}
+{"type":"item.completed","item":{"id":"edit-1","type":"file_change","status":"completed","changes":[{"path":"answer.py","kind":"update"}]}}
+{"type":"item.completed","item":{"id":"a1","type":"agent_message","text":"Edited answer.py."}}
+{"type":"turn.completed","usage":{"input_tokens":10,"cached_input_tokens":3,"output_tokens":5}}
+{"type":"turn.completed","usage":{"input_tokens":10,"cached_input_tokens":3,"output_tokens":5}}
+{"type":"turn.started"}
+{"type":"error","message":"Reconnecting... 1/3"}
+{"type":"item.started","item":{"id":"mcp-1","type":"mcp_tool_call","server":"synthetic","tool":"test","status":"in_progress"}}
+{"type":"item.completed","item":{"id":"mcp-1","type":"mcp_tool_call","server":"synthetic","tool":"test","status":"completed"}}
+{"type":"item.completed","item":{"id":"a2","type":"agent_message","text":"Implemented; tests pass."}}
+{"type":"turn.completed","usage":{"input_tokens":20,"cached_input_tokens":4,"output_tokens":7,"output_tokens_details":{"reasoning_tokens":2}}}

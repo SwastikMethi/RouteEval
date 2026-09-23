@@ -1,0 +1,56 @@
+{
+  "RB-PY-001": {
+    "path": "invoice/statistics.py",
+    "old": "total_amount(values) / len(values) if values else 0",
+    "new": "float(total_amount(values)) / len(values) if values else 0",
+    "reason": "Converting Decimal to float loses its numeric contract and precision."
+  },
+  "RB-PY-002": {
+    "path": "http_retry/parser.py",
+    "old": "return max(0.0, (target - current).total_seconds())",
+    "new": "return abs((target - current).total_seconds())",
+    "reason": "Past HTTP dates must clamp to zero rather than scheduling a positive delay."
+  },
+  "RB-PY-003": {
+    "path": "inventory/catalog.py",
+    "old": "available is None or item.available is available",
+    "new": "not available or item.available is available",
+    "reason": "False is an enabled availability filter, not an absent filter."
+  },
+  "RB-PY-004": {
+    "path": "cache.py",
+    "old": "self._clock() >= self._deadlines[key]",
+    "new": "self._clock() > self._deadlines[key]",
+    "reason": "An item must expire exactly at its deadline, not only after it."
+  },
+  "RB-PY-005": {
+    "path": "settings/resolver.py",
+    "old": "_normalize(project), read_environment(env or {}), _normalize(runtime)",
+    "new": "_normalize(project), _normalize(runtime), read_environment(env or {})",
+    "reason": "Environment must not override explicit runtime values."
+  },
+  "RB-PY-006": {
+    "path": "events/service.py",
+    "old": "return events_to_csv(self.list_events(query))",
+    "new": "return events_to_csv(self.list_events())",
+    "reason": "CSV export must apply the same query filtering as existing service output."
+  },
+  "RB-PY-007": {
+    "path": "transports/registration.py",
+    "old": "if name in factories:",
+    "new": "if False:",
+    "reason": "Allowing registration collisions silently replaces built-in and custom factories."
+  },
+  "RB-PY-008": {
+    "path": "artifacts/paths.py",
+    "old": "not target.is_relative_to(base)",
+    "new": "not str(target).startswith(str(base))",
+    "reason": "String containment incorrectly accepts sibling names sharing the root prefix."
+  },
+  "RB-PY-009": {
+    "path": "inventory/service.py",
+    "old": "if record.status == \"cancelled\":",
+    "new": "if False:",
+    "reason": "Repeated cancellation restores stock more than once, inflating available inventory."
+  }
+}

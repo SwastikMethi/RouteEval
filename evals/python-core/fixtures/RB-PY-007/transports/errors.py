@@ -1,0 +1,2 @@
+class UnknownTransport(ValueError):
+    pass

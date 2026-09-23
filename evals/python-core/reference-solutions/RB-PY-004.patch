@@ -1,0 +1,40 @@
+diff --git a/cache.py b/cache.py
+--- a/cache.py
++++ b/cache.py
+@@ -4,18 +4,36 @@
+     def __init__(self, *, clock=time.monotonic):
+         self._clock = clock
+         self._values = {}
++        self._deadlines = {}
+ 
+     def set(self, key, value, ttl=None):
++        if ttl is not None and ttl < 0:
++            raise ValueError("ttl must be non-negative")
++        deadline = None if ttl is None else self._clock() + ttl
+         self._values[key] = value
++        if deadline is None:
++            self._deadlines.pop(key, None)
++        else:
++            self._deadlines[key] = deadline
++
++    def _expire(self, key):
++        if key in self._deadlines and self._clock() >= self._deadlines[key]:
++            self._values.pop(key, None)
++            del self._deadlines[key]
+ 
+     def get(self, key, default=None):
++        self._expire(key)
+         return self._values.get(key, default)
+ 
+     def __contains__(self, key):
++        self._expire(key)
+         return key in self._values
+ 
+     def __len__(self):
++        for key in list(self._deadlines):
++            self._expire(key)
+         return len(self._values)
+ 
+     def clear(self):
+         self._values.clear()
++        self._deadlines.clear()

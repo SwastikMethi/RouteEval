@@ -1,0 +1,97 @@
+diff --git a/transports/_registry.py b/transports/_registry.py
+new file mode 100644
+--- /dev/null
++++ b/transports/_registry.py
+@@ -0,0 +1,10 @@
++from .errors import UnknownTransport
++from .implementations import MemoryTransport, ConsoleTransport, FileTransport
++
++factories = {"memory": MemoryTransport, "console": ConsoleTransport, "file": FileTransport}
++
++def resolve(name):
++    try:
++        return factories[name]
++    except KeyError:
++        raise UnknownTransport(name) from None
+diff --git a/transports/registration.py b/transports/registration.py
+--- a/transports/registration.py
++++ b/transports/registration.py
+@@ -1,6 +1,6 @@
+-_factories = {}
++from ._registry import factories
+ 
+ def register(name, factory):
+-    if name in ("memory", "console", "file") or name in _factories:
++    if name in factories:
+         raise ValueError(f"transport already registered: {name}")
+-    _factories[name] = factory
++    factories[name] = factory
+diff --git a/transports/client.py b/transports/client.py
+--- a/transports/client.py
++++ b/transports/client.py
+@@ -1,17 +1,4 @@
+-from .errors import UnknownTransport
+-from .implementations import MemoryTransport, ConsoleTransport, FileTransport
+-from .registration import _factories
++from ._registry import resolve
+ 
+ def create_transport(name, endpoint, *, timeout=5):
+-    if name == "memory":
+-        factory = MemoryTransport
+-    elif name == "console":
+-        factory = ConsoleTransport
+-    elif name == "file":
+-        factory = FileTransport
+-    else:
+-        try:
+-            factory = _factories[name]
+-        except KeyError:
+-            raise UnknownTransport(name) from None
+-    return factory(endpoint, timeout=timeout)
++    return resolve(name)(endpoint, timeout=timeout)
+diff --git a/transports/sender.py b/transports/sender.py
+--- a/transports/sender.py
++++ b/transports/sender.py
+@@ -1,17 +1,4 @@
+-from .errors import UnknownTransport
+-from .implementations import MemoryTransport, ConsoleTransport, FileTransport
+-from .registration import _factories
++from .client import create_transport
+ 
+ def send(name, endpoint, payload, *, timeout=5):
+-    if name == "memory":
+-        factory = MemoryTransport
+-    elif name == "console":
+-        factory = ConsoleTransport
+-    elif name == "file":
+-        factory = FileTransport
+-    else:
+-        try:
+-            factory = _factories[name]
+-        except KeyError:
+-            raise UnknownTransport(name) from None
+-    return factory(endpoint, timeout=timeout).send(payload)
++    return create_transport(name, endpoint, timeout=timeout).send(payload)
+diff --git a/transports/preview.py b/transports/preview.py
+--- a/transports/preview.py
++++ b/transports/preview.py
+@@ -1,17 +1,4 @@
+-from .errors import UnknownTransport
+-from .implementations import MemoryTransport, ConsoleTransport, FileTransport
+-from .registration import _factories
++from .client import create_transport
+ 
+ def preview(name, endpoint, *, timeout=5):
+-    if name == "memory":
+-        factory = MemoryTransport
+-    elif name == "console":
+-        factory = ConsoleTransport
+-    elif name == "file":
+-        factory = FileTransport
+-    else:
+-        try:
+-            factory = _factories[name]
+-        except KeyError:
+-            raise UnknownTransport(name) from None
+-    return factory(endpoint, timeout=timeout).describe()
++    return create_transport(name, endpoint, timeout=timeout).describe()

@@ -1,0 +1,19 @@
+diff --git a/artifacts/paths.py b/artifacts/paths.py
+--- a/artifacts/paths.py
++++ b/artifacts/paths.py
+@@ -1,8 +1,12 @@
+-from pathlib import Path
++from pathlib import Path, PureWindowsPath
+ 
+ def normalize_path(root, relative):
++    if not isinstance(relative, str) or not relative or "\x00" in relative or "\\" in relative:
++        raise ValueError("artifact path must be a nonempty relative string")
++    if Path(relative).is_absolute() or PureWindowsPath(relative).drive:
++        raise ValueError("absolute artifact paths are forbidden")
+     base = Path(root).resolve()
+     target = (base / relative).resolve()
+-    if not str(target).startswith(str(base)):
+-        raise ValueError("artifact path escapes root")
++    if target == base or not target.is_relative_to(base):
++        raise ValueError("artifact path escapes root or names root")
+     return target

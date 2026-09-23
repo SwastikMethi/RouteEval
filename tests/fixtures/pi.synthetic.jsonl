@@ -1,0 +1,21 @@
+{"type":"session","id":"synthetic-pi"}
+{"type":"agent_start"}
+{"type":"turn_start","turnIndex":0}
+{"type":"message_start","message":{"role":"assistant"}}
+{"type":"message_update","usage":{"input":900,"output":1},"assistantMessageEvent":{"type":"thinking_delta","delta":"PRIVATE_REASONING_MARKER"}}
+{"type":"message_update","usage":{"input":900,"output":2},"assistantMessageEvent":{"type":"text_delta","delta":"Editing."}}
+{"type":"message_end","message":{"role":"assistant","id":"p1","provider":"synthetic-provider","model":"Auto-3-API","responseModel":"synthetic-small","content":[{"type":"text","text":"Editing."},{"type":"thinking","thinking":"PRIVATE_REASONING_MARKER"}],"usage":{"input":10,"output":4,"cacheRead":2,"cacheWrite":1,"reasoning":1,"cost":{"total":0.002}},"stopReason":"toolUse"}}
+{"type":"tool_execution_start","toolCallId":"call-p1","toolName":"bash","args":{"command":"python -m pytest -q"}}
+diagnostic: synthetic malformed output
+{"type":"tool_execution_update","toolCallId":"call-p1","toolName":"bash","partialResult":{"content":[{"type":"text","text":"collecting"}]}}
+{"type":"tool_execution_end","toolCallId":"call-p1","toolName":"bash","isError":false,"result":{"content":[{"type":"text","text":"1 passed"}]}}
+{"type":"turn_end","turnIndex":0,"message":{"role":"assistant","id":"p1","provider":"synthetic-provider","model":"Auto-3-API","responseModel":"synthetic-small","content":[{"type":"text","text":"Editing."}],"usage":{"input":10,"output":4,"cacheRead":2,"cacheWrite":1,"reasoning":1,"cost":{"total":0.002}},"stopReason":"toolUse"}}
+{"type":"turn_start","turnIndex":1}
+{"type":"message_end","message":{"role":"assistant","id":"p2-error","provider":"synthetic-provider","model":"Auto-3-API","content":[],"usage":{"input":0,"output":0,"cost":{"total":0}},"stopReason":"error","errorMessage":"Synthetic temporary provider failure"}}
+{"type":"agent_end","willRetry":true,"messages":[{"role":"assistant","id":"p2-error","stopReason":"error","errorMessage":"Synthetic temporary provider failure"}]}
+{"type":"auto_retry_start","attempt":1,"maxAttempts":3,"delayMs":0}
+{"type":"turn_start","turnIndex":0}
+{"type":"message_end","message":{"role":"assistant","id":"p3","provider":"synthetic-provider","model":"Auto-3-API","responseModel":"synthetic-large","content":[{"type":"text","text":"Implemented; tests pass."}],"usage":{"input":20,"output":8,"cacheRead":5,"cacheWrite":0,"reasoning":2,"cost":{"total":0.006}},"stopReason":"stop"}}
+{"type":"auto_retry_end","success":true,"attempt":1}
+{"type":"agent_end","willRetry":false,"messages":[{"role":"assistant","id":"p3","provider":"synthetic-provider","model":"Auto-3-API","responseModel":"synthetic-large","content":[{"type":"text","text":"Implemented; tests pass."}],"usage":{"input":20,"output":8,"cacheRead":5,"cacheWrite":0,"reasoning":2,"cost":{"total":0.006}},"stopReason":"stop"}]}
+{"type":"agent_settled"}

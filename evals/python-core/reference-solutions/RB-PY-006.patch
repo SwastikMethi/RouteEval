@@ -1,0 +1,54 @@
+diff --git a/events/serialization.py b/events/serialization.py
+--- a/events/serialization.py
++++ b/events/serialization.py
+@@ -1,5 +1,15 @@
+ from dataclasses import asdict
++import csv
++from io import StringIO
+ import json
+ 
+ def events_to_json(events):
+     return json.dumps([asdict(event) for event in events], ensure_ascii=False)
++
++def events_to_csv(events):
++    stream = StringIO(newline="")
++    writer = csv.writer(stream)
++    writer.writerow(["id", "title", "notes", "attendees"])
++    for event in events:
++        writer.writerow([event.id, event.title, event.notes, event.attendees])
++    return stream.getvalue()
+diff --git a/events/service.py b/events/service.py
+--- a/events/service.py
++++ b/events/service.py
+@@ -1,4 +1,4 @@
+-from .serialization import events_to_json
++from .serialization import events_to_csv, events_to_json
+ 
+ class EventService:
+     def __init__(self, events=()):
+@@ -10,3 +10,6 @@
+ 
+     def export_json(self, query=None):
+         return events_to_json(self.list_events(query))
++
++    def export_csv(self, query=None):
++        return events_to_csv(self.list_events(query))
+diff --git a/events/cli.py b/events/cli.py
+--- a/events/cli.py
++++ b/events/cli.py
+@@ -7,12 +7,15 @@
+     commands = parser.add_subparsers(dest="command", required=True)
+     listing = commands.add_parser("list")
+     listing.add_argument("--query")
++    listing.add_argument("--format", choices=("json", "csv"), default="json")
+     commands.add_parser("count")
+     args = parser.parse_args(argv)
+     service = service if service is not None else EventService()
+     stdout = stdout if stdout is not None else sys.stdout
+     if args.command == "count":
+         stdout.write(str(len(service.list_events())) + "\n")
++    elif args.format == "csv":
++        stdout.write(service.export_csv(args.query))
+     else:
+         stdout.write(service.export_json(args.query) + "\n")
+     return 0

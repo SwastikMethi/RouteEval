@@ -1,0 +1,26 @@
+diff --git a/http_retry/parser.py b/http_retry/parser.py
+--- a/http_retry/parser.py
++++ b/http_retry/parser.py
+@@ -1,4 +1,20 @@
++from datetime import timezone
++from email.utils import parsedate_to_datetime
++import re
++
+ def parse_retry_after(value, *, now, fallback=1.0):
+-    if isinstance(value, str) and value.isdigit():
++    if not isinstance(value, str):
++        return fallback
++    value = value.strip()
++    if re.fullmatch(r"[0-9]+", value):
+         return int(value)
+-    return fallback
++    try:
++        target = parsedate_to_datetime(value)
++    except (TypeError, ValueError, OverflowError):
++        return fallback
++    current = now()
++    if target.tzinfo is None:
++        target = target.replace(tzinfo=timezone.utc)
++    if current.tzinfo is None:
++        current = current.replace(tzinfo=timezone.utc)
++    return max(0.0, (target - current).total_seconds())

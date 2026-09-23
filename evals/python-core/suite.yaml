@@ -1,0 +1,800 @@
+{
+  "version": 1,
+  "id": "python-core",
+  "release": "1.1.0",
+  "name": "RouteBench Python Core",
+  "description": "Nine offline, deterministic Python repository tasks, including a planning and execution workflow, with private behavior groups and reference patches.",
+  "pass_threshold": 1.0,
+  "cases": [
+    {
+      "id": "RB-PY-001",
+      "title": "Decimal average correction",
+      "category": "bug-fix",
+      "difficulty": "easy",
+      "tags": [
+        "python",
+        "correctness",
+        "smoke"
+      ],
+      "fixture": "fixtures/RB-PY-001",
+      "hidden_graders": "hidden-graders/RB-PY-001",
+      "reference_patch": "reference-solutions/RB-PY-001.patch",
+      "timeout_seconds": 900,
+      "prompt": "Decimal average correction. Implement the behavior specified in README.md, preserve public APIs and visible tests, and run the relevant tests. Runtime dependencies must remain standard-library only.",
+      "scoring": [
+        {
+          "id": "basic",
+          "component": "functional",
+          "weight": 0.4,
+          "mandatory": true,
+          "command": [
+            "{python}",
+            "-m",
+            "pytest",
+            "-q",
+            "--tb=no",
+            "--assert=plain",
+            "__hidden__/test_basic.py"
+          ]
+        },
+        {
+          "id": "edges",
+          "component": "functional",
+          "weight": 0.4,
+          "mandatory": true,
+          "command": [
+            "{python}",
+            "-m",
+            "pytest",
+            "-q",
+            "--tb=no",
+            "--assert=plain",
+            "__hidden__/test_edges.py"
+          ]
+        },
+        {
+          "id": "regression",
+          "component": "regression",
+          "weight": 0.1,
+          "mandatory": true,
+          "command": [
+            "{python}",
+            "-m",
+            "pytest",
+            "-q",
+            "--tb=no",
+            "--assert=plain",
+            "tests"
+          ]
+        },
+        {
+          "id": "source_scope",
+          "component": "constraints",
+          "weight": 0.05,
+          "mandatory": true,
+          "grader": "allowed_paths",
+          "paths": [
+            "invoice/**"
+          ]
+        },
+        {
+          "id": "runtime_contract",
+          "component": "constraints",
+          "weight": 0.05,
+          "mandatory": true,
+          "command": [
+            "{python}",
+            "-m",
+            "pytest",
+            "-q",
+            "--tb=no",
+            "--assert=plain",
+            "__hidden__/test_contract.py"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RB-PY-002",
+      "title": "Retry-After parser",
+      "category": "bug-fix",
+      "difficulty": "medium",
+      "tags": [
+        "python",
+        "correctness"
+      ],
+      "fixture": "fixtures/RB-PY-002",
+      "hidden_graders": "hidden-graders/RB-PY-002",
+      "reference_patch": "reference-solutions/RB-PY-002.patch",
+      "timeout_seconds": 900,
+      "prompt": "Retry-After parser. Implement the behavior specified in README.md, preserve public APIs and visible tests, and run the relevant tests. Runtime dependencies must remain standard-library only.",
+      "scoring": [
+        {
+          "id": "basic",
+          "component": "functional",
+          "weight": 0.4,
+          "mandatory": true,
+          "command": [
+            "{python}",
+            "-m",
+            "pytest",
+            "-q",
+            "--tb=no",
+            "--assert=plain",
+            "__hidden__/test_basic.py"
+          ]
+        },
+        {
+          "id": "edges",
+          "component": "functional",
+          "weight": 0.4,
+          "mandatory": true,
+          "command": [
+            "{python}",
+            "-m",
+            "pytest",
+            "-q",
+            "--tb=no",
+            "--assert=plain",
+            "__hidden__/test_edges.py"
+          ]
+        },
+        {
+          "id": "regression",
+          "component": "regression",
+          "weight": 0.1,
+          "mandatory": true,
+          "command": [
+            "{python}",
+            "-m",
+            "pytest",
+            "-q",
+            "--tb=no",
+            "--assert=plain",
+            "tests"
+          ]
+        },
+        {
+          "id": "source_scope",
+          "component": "constraints",
+          "weight": 0.05,
+          "mandatory": true,
+          "grader": "allowed_paths",
+          "paths": [
+            "http_retry/**"
+          ]
+        },
+        {
+          "id": "runtime_contract",
+          "component": "constraints",
+          "weight": 0.05,
+          "mandatory": true,
+          "command": [
+            "{python}",
+            "-m",
+            "pytest",
+            "-q",
+            "--tb=no",
+            "--assert=plain",
+            "__hidden__/test_contract.py"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RB-PY-003",
+      "title": "Inventory filtering feature",
+      "category": "feature",
+      "difficulty": "easy",
+      "tags": [
+        "python",
+        "correctness",
+        "smoke"
+      ],
+      "fixture": "fixtures/RB-PY-003",
+      "hidden_graders": "hidden-graders/RB-PY-003",
+      "reference_patch": "reference-solutions/RB-PY-003.patch",
+      "timeout_seconds": 900,
+      "prompt": "Inventory filtering feature. Implement the behavior specified in README.md, preserve public APIs and visible tests, and run the relevant tests. Runtime dependencies must remain standard-library only.",
+      "scoring": [
+        {
+          "id": "basic",
+          "component": "functional",
+          "weight": 0.4,
+          "mandatory": true,
+          "command": [
+            "{python}",
+            "-m",
+            "pytest",
+            "-q",
+            "--tb=no",
+            "--assert=plain",
+            "__hidden__/test_basic.py"
+          ]
+        },
+        {
+          "id": "edges",
+          "component": "functional",
+          "weight": 0.4,
+          "mandatory": true,
+          "command": [
+            "{python}",
+            "-m",
+            "pytest",
+            "-q",
+            "--tb=no",
+            "--assert=plain",
+            "__hidden__/test_edges.py"
+          ]
+        },
+        {
+          "id": "regression",
+          "component": "regression",
+          "weight": 0.1,
+          "mandatory": true,
+          "command": [
+            "{python}",
+            "-m",
+            "pytest",
+            "-q",
+            "--tb=no",
+            "--assert=plain",
+            "tests"
+          ]
+        },
+        {
+          "id": "source_scope",
+          "component": "constraints",
+          "weight": 0.05,
+          "mandatory": true,
+          "grader": "allowed_paths",
+          "paths": [
+            "inventory/**"
+          ]
+        },
+        {
+          "id": "runtime_contract",
+          "component": "constraints",
+          "weight": 0.05,
+          "mandatory": true,
+          "command": [
+            "{python}",
+            "-m",
+            "pytest",
+            "-q",
+            "--tb=no",
+            "--assert=plain",
+            "__hidden__/test_contract.py"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RB-PY-004",
+      "title": "TTL cache feature",
+      "category": "feature",
+      "difficulty": "medium",
+      "tags": [
+        "python",
+        "correctness"
+      ],
+      "fixture": "fixtures/RB-PY-004",
+      "hidden_graders": "hidden-graders/RB-PY-004",
+      "reference_patch": "reference-solutions/RB-PY-004.patch",
+      "timeout_seconds": 900,
+      "prompt": "TTL cache feature. Implement the behavior specified in README.md, preserve public APIs and visible tests, and run the relevant tests. Runtime dependencies must remain standard-library only.",
+      "scoring": [
+        {
+          "id": "basic",
+          "component": "functional",
+          "weight": 0.4,
+          "mandatory": true,
+          "command": [
+            "{python}",
+            "-m",
+            "pytest",
+            "-q",
+            "--tb=no",
+            "--assert=plain",
+            "__hidden__/test_basic.py"
+          ]
+        },
+        {
+          "id": "edges",
+          "component": "functional",
+          "weight": 0.4,
+          "mandatory": true,
+          "command": [
+            "{python}",
+            "-m",
+            "pytest",
+            "-q",
+            "--tb=no",
+            "--assert=plain",
+            "__hidden__/test_edges.py"
+          ]
+        },
+        {
+          "id": "regression",
+          "component": "regression",
+          "weight": 0.1,
+          "mandatory": true,
+          "command": [
+            "{python}",
+            "-m",
+            "pytest",
+            "-q",
+            "--tb=no",
+            "--assert=plain",
+            "tests"
+          ]
+        },
+        {
+          "id": "source_scope",
+          "component": "constraints",
+          "weight": 0.05,
+          "mandatory": true,
+          "grader": "allowed_paths",
+          "paths": [
+            "cache.py"
+          ]
+        },
+        {
+          "id": "runtime_contract",
+          "component": "constraints",
+          "weight": 0.05,
+          "mandatory": true,
+          "command": [
+            "{python}",
+            "-m",
+            "pytest",
+            "-q",
+            "--tb=no",
+            "--assert=plain",
+            "__hidden__/test_contract.py"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RB-PY-005",
+      "title": "Layered configuration resolution",
+      "category": "multi-file",
+      "difficulty": "hard",
+      "tags": [
+        "python",
+        "correctness",
+        "smoke"
+      ],
+      "fixture": "fixtures/RB-PY-005",
+      "hidden_graders": "hidden-graders/RB-PY-005",
+      "reference_patch": "reference-solutions/RB-PY-005.patch",
+      "timeout_seconds": 900,
+      "prompt": "Layered configuration resolution. Implement the behavior specified in README.md, preserve public APIs and visible tests, and run the relevant tests. Runtime dependencies must remain standard-library only.",
+      "scoring": [
+        {
+          "id": "precedence",
+          "component": "functional",
+          "weight": 0.4,
+          "mandatory": true,
+          "command": [
+            "{python}",
+            "-m",
+            "pytest",
+            "-q",
+            "--tb=no",
+            "--assert=plain",
+            "__hidden__/test_precedence.py"
+          ]
+        },
+        {
+          "id": "coercion",
+          "component": "functional",
+          "weight": 0.4,
+          "mandatory": true,
+          "command": [
+            "{python}",
+            "-m",
+            "pytest",
+            "-q",
+            "--tb=no",
+            "--assert=plain",
+            "__hidden__/test_coercion.py"
+          ]
+        },
+        {
+          "id": "regression",
+          "component": "regression",
+          "weight": 0.1,
+          "mandatory": true,
+          "command": [
+            "{python}",
+            "-m",
+            "pytest",
+            "-q",
+            "--tb=no",
+            "--assert=plain",
+            "tests"
+          ]
+        },
+        {
+          "id": "source_scope",
+          "component": "constraints",
+          "weight": 0.05,
+          "mandatory": true,
+          "grader": "allowed_paths",
+          "paths": [
+            "settings/**"
+          ]
+        },
+        {
+          "id": "runtime_contract",
+          "component": "constraints",
+          "weight": 0.05,
+          "mandatory": true,
+          "command": [
+            "{python}",
+            "-m",
+            "pytest",
+            "-q",
+            "--tb=no",
+            "--assert=plain",
+            "__hidden__/test_contract.py"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RB-PY-006",
+      "title": "Event export across layers",
+      "category": "multi-file",
+      "difficulty": "medium",
+      "tags": [
+        "python",
+        "correctness"
+      ],
+      "fixture": "fixtures/RB-PY-006",
+      "hidden_graders": "hidden-graders/RB-PY-006",
+      "reference_patch": "reference-solutions/RB-PY-006.patch",
+      "timeout_seconds": 900,
+      "prompt": "Event export across layers. Implement the behavior specified in README.md, preserve public APIs and visible tests, and run the relevant tests. Runtime dependencies must remain standard-library only.",
+      "scoring": [
+        {
+          "id": "serialization",
+          "component": "functional",
+          "weight": 0.45,
+          "mandatory": true,
+          "command": [
+            "{python}",
+            "-m",
+            "pytest",
+            "-q",
+            "--tb=no",
+            "--assert=plain",
+            "__hidden__/test_serialization.py"
+          ]
+        },
+        {
+          "id": "integration",
+          "component": "functional",
+          "weight": 0.35,
+          "mandatory": true,
+          "command": [
+            "{python}",
+            "-m",
+            "pytest",
+            "-q",
+            "--tb=no",
+            "--assert=plain",
+            "__hidden__/test_integration.py"
+          ]
+        },
+        {
+          "id": "regression",
+          "component": "regression",
+          "weight": 0.1,
+          "mandatory": true,
+          "command": [
+            "{python}",
+            "-m",
+            "pytest",
+            "-q",
+            "--tb=no",
+            "--assert=plain",
+            "tests"
+          ]
+        },
+        {
+          "id": "source_scope",
+          "component": "constraints",
+          "weight": 0.05,
+          "mandatory": true,
+          "grader": "allowed_paths",
+          "paths": [
+            "events/**"
+          ]
+        },
+        {
+          "id": "runtime_contract",
+          "component": "constraints",
+          "weight": 0.05,
+          "mandatory": true,
+          "command": [
+            "{python}",
+            "-m",
+            "pytest",
+            "-q",
+            "--tb=no",
+            "--assert=plain",
+            "__hidden__/test_contract.py"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RB-PY-007",
+      "title": "Transport registry refactor",
+      "category": "refactor",
+      "difficulty": "hard",
+      "tags": [
+        "python",
+        "correctness"
+      ],
+      "fixture": "fixtures/RB-PY-007",
+      "hidden_graders": "hidden-graders/RB-PY-007",
+      "reference_patch": "reference-solutions/RB-PY-007.patch",
+      "timeout_seconds": 900,
+      "prompt": "Transport registry refactor. Implement the behavior specified in README.md, preserve public APIs and visible tests, and run the relevant tests. Runtime dependencies must remain standard-library only.",
+      "scoring": [
+        {
+          "id": "behavior",
+          "component": "functional",
+          "weight": 0.5,
+          "mandatory": true,
+          "command": [
+            "{python}",
+            "-m",
+            "pytest",
+            "-q",
+            "--tb=no",
+            "--assert=plain",
+            "__hidden__/test_behavior.py"
+          ]
+        },
+        {
+          "id": "structure",
+          "component": "functional",
+          "weight": 0.3,
+          "mandatory": true,
+          "command": [
+            "{python}",
+            "-m",
+            "pytest",
+            "-q",
+            "--tb=no",
+            "--assert=plain",
+            "__hidden__/test_structure.py"
+          ]
+        },
+        {
+          "id": "regression",
+          "component": "regression",
+          "weight": 0.1,
+          "mandatory": true,
+          "command": [
+            "{python}",
+            "-m",
+            "pytest",
+            "-q",
+            "--tb=no",
+            "--assert=plain",
+            "tests"
+          ]
+        },
+        {
+          "id": "source_scope",
+          "component": "constraints",
+          "weight": 0.05,
+          "mandatory": true,
+          "grader": "allowed_paths",
+          "paths": [
+            "transports/**"
+          ]
+        },
+        {
+          "id": "runtime_contract",
+          "component": "constraints",
+          "weight": 0.05,
+          "mandatory": true,
+          "command": [
+            "{python}",
+            "-m",
+            "pytest",
+            "-q",
+            "--tb=no",
+            "--assert=plain",
+            "__hidden__/test_contract.py"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RB-PY-008",
+      "title": "Safe path normalization",
+      "category": "edge-case",
+      "difficulty": "easy",
+      "tags": [
+        "python",
+        "correctness"
+      ],
+      "fixture": "fixtures/RB-PY-008",
+      "hidden_graders": "hidden-graders/RB-PY-008",
+      "reference_patch": "reference-solutions/RB-PY-008.patch",
+      "timeout_seconds": 900,
+      "prompt": "Safe path normalization. Implement the behavior specified in README.md, preserve public APIs and visible tests, and run the relevant tests. Runtime dependencies must remain standard-library only.",
+      "scoring": [
+        {
+          "id": "basic",
+          "component": "functional",
+          "weight": 0.4,
+          "mandatory": true,
+          "command": [
+            "{python}",
+            "-m",
+            "pytest",
+            "-q",
+            "--tb=no",
+            "--assert=plain",
+            "__hidden__/test_basic.py"
+          ]
+        },
+        {
+          "id": "edges",
+          "component": "functional",
+          "weight": 0.4,
+          "mandatory": true,
+          "command": [
+            "{python}",
+            "-m",
+            "pytest",
+            "-q",
+            "--tb=no",
+            "--assert=plain",
+            "__hidden__/test_edges.py"
+          ]
+        },
+        {
+          "id": "regression",
+          "component": "regression",
+          "weight": 0.1,
+          "mandatory": true,
+          "command": [
+            "{python}",
+            "-m",
+            "pytest",
+            "-q",
+            "--tb=no",
+            "--assert=plain",
+            "tests"
+          ]
+        },
+        {
+          "id": "source_scope",
+          "component": "constraints",
+          "weight": 0.05,
+          "mandatory": true,
+          "grader": "allowed_paths",
+          "paths": [
+            "artifacts/**"
+          ]
+        },
+        {
+          "id": "runtime_contract",
+          "component": "constraints",
+          "weight": 0.05,
+          "mandatory": true,
+          "command": [
+            "{python}",
+            "-m",
+            "pytest",
+            "-q",
+            "--tb=no",
+            "--assert=plain",
+            "__hidden__/test_contract.py"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RB-PY-009",
+      "title": "Inventory reservations: plan, implement, verify",
+      "category": "planning-execution",
+      "difficulty": "hard",
+      "tags": [
+        "python",
+        "planning",
+        "multi-file"
+      ],
+      "fixture": "fixtures/RB-PY-009",
+      "hidden_graders": "hidden-graders/RB-PY-009",
+      "reference_patch": "reference-solutions/RB-PY-009.patch",
+      "timeout_seconds": 900,
+      "prompt": "Inventory reservations: plan, implement, verify. Read README.md and inspect the existing repository. Before editing implementation files, write PLAN.md with the required requirements, approach, failure cases, and testing sections. Implement the reservation contract, preserve existing APIs and tests, and add focused tests in tests/test_reservations.py. Run the visible tests, fix failures, and write VERIFICATION.md with actual commands, outcomes, and limitations. Complete all steps in this session, then summarize your changes and verification. Follow the documented file scope and use only standard-library runtime dependencies.",
+      "scoring": [
+        {
+          "id": "atomic",
+          "component": "functional",
+          "weight": 0.4,
+          "mandatory": true,
+          "command": [
+            "{python}",
+            "-m",
+            "pytest",
+            "-q",
+            "--tb=no",
+            "--assert=plain",
+            "__hidden__/test_atomic.py"
+          ]
+        },
+        {
+          "id": "lifecycle",
+          "component": "functional",
+          "weight": 0.4,
+          "mandatory": true,
+          "command": [
+            "{python}",
+            "-m",
+            "pytest",
+            "-q",
+            "--tb=no",
+            "--assert=plain",
+            "__hidden__/test_lifecycle.py"
+          ]
+        },
+        {
+          "id": "regression",
+          "component": "regression",
+          "weight": 0.1,
+          "mandatory": true,
+          "command": [
+            "{python}",
+            "-m",
+            "pytest",
+            "-q",
+            "--tb=no",
+            "--assert=plain",
+            "tests"
+          ]
+        },
+        {
+          "id": "source_scope",
+          "component": "constraints",
+          "weight": 0.05,
+          "mandatory": true,
+          "grader": "allowed_paths",
+          "paths": [
+            "inventory/**",
+            "tests/test_reservations.py",
+            "PLAN.md",
+            "VERIFICATION.md"
+          ]
+        },
+        {
+          "id": "runtime_contract",
+          "component": "constraints",
+          "weight": 0.05,
+          "mandatory": true,
+          "command": [
+            "{python}",
+            "-m",
+            "pytest",
+            "-q",
+            "--tb=no",
+            "--assert=plain",
+            "__hidden__/test_contract.py"
+          ]
+        }
+      ]
+    }
+  ]
+}

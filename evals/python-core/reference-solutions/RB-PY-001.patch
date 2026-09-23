@@ -1,0 +1,9 @@
+diff --git a/invoice/statistics.py b/invoice/statistics.py
+--- a/invoice/statistics.py
++++ b/invoice/statistics.py
+@@ -5,4 +5,4 @@
+ def average_amount(values):
+     """Arithmetic mean; return zero when there are no values."""
+     values = list(values)
+-    return total_amount(values) // len(values)
++    return total_amount(values) / len(values) if values else 0

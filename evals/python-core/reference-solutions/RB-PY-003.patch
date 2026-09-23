@@ -1,0 +1,12 @@
+diff --git a/inventory/catalog.py b/inventory/catalog.py
+--- a/inventory/catalog.py
++++ b/inventory/catalog.py
+@@ -12,4 +12,7 @@
+ 
+     def filter(self, *, category=None, available=None, max_price=None):
+         """Return original records matching every enabled filter, in input order."""
+-        return list(self._items)
++        return [item for item in self._items
++                if (category is None or item.category == category)
++                and (available is None or item.available is available)
++                and (max_price is None or item.price is not None and item.price <= max_price)]

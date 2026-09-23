@@ -1,0 +1,15 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.routebench/
+routebench.yaml
+node_modules/
+dist/
+playwright-report/
+test-results/
+.implementation/
+.codebase-memory/
+*.egg-info/
+.DS_Store

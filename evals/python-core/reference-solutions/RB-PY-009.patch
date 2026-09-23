@@ -1,0 +1,145 @@
+diff --git a/inventory/service.py b/inventory/service.py
+--- a/inventory/service.py
++++ b/inventory/service.py
+@@ -1,4 +1,20 @@
++from .models import Reservation, identifier
+ from .store import StockStore
++
++
++def normalize(lines):
++    quantities = {}
++    try:
++        for sku, quantity in lines:
++            identifier(sku)
++            if type(quantity) is not int or quantity <= 0:
++                raise ValueError("Quantities must be positive integers")
++            quantities[sku] = quantities.get(sku, 0) + quantity
++    except (TypeError, ValueError) as exc:
++        raise ValueError("Expected SKU/positive-integer pairs") from exc
++    if not quantities:
++        raise ValueError("At least one item is required")
++    return tuple(sorted(quantities.items()))
+ 
+ 
+ class InventoryService:
+@@ -13,10 +29,26 @@
+         return self._store.snapshot()
+ 
+     def reserve(self, reservation_id, lines):
+-        raise NotImplementedError("Implement atomic reservations and safe retries")
++        identifier(reservation_id)
++        items = normalize(lines)
++        previous = self._reservations.get(reservation_id)
++        if previous is not None:
++            if previous.items != items:
++                raise ValueError("Reservation ID already has different items")
++            return previous
++        self._store.deduct(items)
++        record = Reservation(reservation_id, items, "active")
++        self._reservations[reservation_id] = record
++        return record
+ 
+     def get_reservation(self, reservation_id):
+-        raise NotImplementedError("Implement reservation lookup")
++        return self._reservations[identifier(reservation_id)]
+ 
+     def cancel(self, reservation_id):
+-        raise NotImplementedError("Implement idempotent cancellation")
++        record = self.get_reservation(reservation_id)
++        if record.status == "cancelled":
++            return record
++        self._store.restore(record.items)
++        cancelled = Reservation(record.reservation_id, record.items, "cancelled")
++        self._reservations[reservation_id] = cancelled
++        return cancelled
+diff --git a/inventory/store.py b/inventory/store.py
+--- a/inventory/store.py
++++ b/inventory/store.py
+@@ -22,8 +22,13 @@
+ 
+     def deduct(self, items):
+         """Check every line before deducting any stock."""
+-        raise NotImplementedError("Implement atomic stock deduction")
++        available = [(sku, quantity, self._stock[sku]) for sku, quantity in items]
++        if any(quantity > stock for sku, quantity, stock in available):
++            raise ValueError("Insufficient stock")
++        for sku, quantity, stock in available:
++            self._stock[sku] = stock - quantity
+ 
+     def restore(self, items):
+         """Restore quantities from a previously active reservation."""
+-        raise NotImplementedError("Implement stock restoration")
++        for sku, quantity in items:
++            self._stock[sku] += quantity
+diff --git a/tests/test_reservations.py b/tests/test_reservations.py
+new file mode 100644
+--- /dev/null
++++ b/tests/test_reservations.py
+@@ -0,0 +1,21 @@
++import pytest
++
++from inventory import InventoryService
++
++
++def test_reserve_retry_and_cancel():
++    service = InventoryService({"a": 5, "b": 3})
++    record = service.reserve("one", [("b", 1), ("a", 2)])
++    assert record.items == (("a", 2), ("b", 1))
++    assert service.reserve("one", [("a", 2), ("b", 1)]) == record
++    assert service.stock_snapshot() == {"a": 3, "b": 2}
++    assert service.cancel("one").status == "cancelled"
++    assert service.stock_snapshot() == {"a": 5, "b": 3}
++
++
++def test_rejection_keeps_stock_and_id_available():
++    service = InventoryService({"a": 5, "b": 1})
++    with pytest.raises(ValueError):
++        service.reserve("one", [("a", 2), ("b", 2)])
++    assert service.stock_snapshot() == {"a": 5, "b": 1}
++    assert service.reserve("one", [("a", 1)]).status == "active"
+diff --git a/PLAN.md b/PLAN.md
+new file mode 100644
+--- /dev/null
++++ b/PLAN.md
+@@ -0,0 +1,22 @@
++# Reservation implementation plan
++
++## Requirements
++Preserve stock reads (R1); validate and reserve all lines atomically (R2).
++Equivalent retries must not deduct again (R3); cancellation restores once (R4).
++Immutable records, snapshots, and isolated services satisfy R5. Preserve runtime
++and test contracts and record verification for R6.
++
++## Approach
++Keep the frozen Reservation model. Normalize all lines in inventory/service.py
++before looking up history. Add two-pass deduction and restoration to
++inventory/store.py. Replace records on cancellation instead of mutating them.
++
++## Failure cases
++Reject malformed quantities and unknown SKUs before any stock changes. Check
++all availability before deduction. Failed IDs remain reusable; conflicting
++retries fail, and cancelled retries never reactivate the reservation.
++
++## Testing
++Run python -m pytest -q tests. Add visible coverage for reserve/retry/cancel and
++partial failure followed by successful ID reuse. Check edge cases independently
++with the private reference validation during benchmark development.
+diff --git a/VERIFICATION.md b/VERIFICATION.md
+new file mode 100644
+--- /dev/null
++++ b/VERIFICATION.md
+@@ -0,0 +1,14 @@
++# Reference verification
++
++## Commands
++Executed `../../.venv/bin/python -m pytest -q tests` in the reference workspace.
++An agent workspace can use the equivalent `python -m pytest -q tests`.
++
++## Outcomes
++All four visible tests passed: existing stock behavior and validation, reservation
++retry/cancellation, and atomic rejection followed by successful ID reuse.
++
++## Limitations
++This is an in-memory, single-threaded service. There is no persistence or
++concurrent access guarantee, as specified. The report does not establish router
++behavior or prove the order in which implementation artifacts were authored.

@@ -1,0 +1,99 @@
+diff --git a/settings/schema.py b/settings/schema.py
+--- a/settings/schema.py
++++ b/settings/schema.py
+@@ -1,3 +1,5 @@
++import re
++
+ DEFAULTS = {"debug": False, "retries": 3, "timeout": 30,
+             "database": {"host": "localhost", "port": 5432}}
+ 
+@@ -6,7 +8,26 @@
+ 
+ def coerce_value(key, value):
+     if key == "debug":
+-        return bool(value)
++        if isinstance(value, bool):
++            return value
++        if isinstance(value, str):
++            word = value.strip().lower()
++            if word in ("true", "1", "yes", "on"):
++                return True
++            if word in ("false", "0", "no", "off"):
++                return False
++        raise ConfigError(f"{key}: expected a boolean")
+     if key in ("retries", "timeout", "database.port"):
+-        return int(value)
+-    return value
++        if isinstance(value, str) and re.fullmatch(r"[+-]?[0-9]+", value.strip()):
++            value = int(value)
++        if type(value) is not int:
++            raise ConfigError(f"{key}: expected an integer")
++        minimum = 0 if key == "retries" else 1
++        if value < minimum or key == "database.port" and value > 65535:
++            raise ConfigError(f"{key}: integer outside allowed range")
++        return value
++    if key == "database.host":
++        if isinstance(value, str) and value:
++            return value
++        raise ConfigError(f"{key}: expected a nonempty string")
++    raise ConfigError(f"{key}: unknown setting")
+diff --git a/settings/sources.py b/settings/sources.py
+--- a/settings/sources.py
++++ b/settings/sources.py
+@@ -1,3 +1,5 @@
++from .schema import coerce_value
++
+ ENV_KEYS = {"APP_DEBUG": "debug", "APP_RETRIES": "retries", "APP_TIMEOUT": "timeout",
+             "APP_DATABASE__HOST": "database.host", "APP_DATABASE__PORT": "database.port"}
+ 
+@@ -6,11 +8,7 @@
+     for variable, key in ENV_KEYS.items():
+         if variable not in env or env[variable] is None:
+             continue
+-        value = env[variable]
+-        if key == "debug":
+-            value = bool(value)
+-        elif key in ("retries", "timeout", "database.port"):
+-            value = int(value)
++        value = coerce_value(key, env[variable])
+         if "." in key:
+             parent, child = key.split(".")
+             result.setdefault(parent, {})[child] = value
+diff --git a/settings/resolver.py b/settings/resolver.py
+--- a/settings/resolver.py
++++ b/settings/resolver.py
+@@ -1,6 +1,32 @@
++from collections.abc import Mapping
+ from .merge import merge_settings
+-from .schema import DEFAULTS
++from .schema import DEFAULTS, ConfigError, coerce_value
+ from .sources import read_environment
+ 
++def _normalize(layer):
++    result = {}
++    if layer is None:
++        return result
++    if not isinstance(layer, Mapping):
++        raise ConfigError("settings: expected a mapping")
++    for key, value in layer.items():
++        if key not in DEFAULTS:
++            raise ConfigError(f"{key}: unknown setting")
++        if value is None:
++            continue
++        if key == "database":
++            if not isinstance(value, Mapping):
++                raise ConfigError("database: expected a mapping")
++            result[key] = {}
++            for child, item in value.items():
++                dotted = f"database.{child}"
++                if child not in DEFAULTS["database"]:
++                    raise ConfigError(f"{dotted}: unknown setting")
++                if item is not None:
++                    result[key][child] = coerce_value(dotted, item)
++        else:
++            result[key] = coerce_value(key, value)
++    return result
++
+ def load_config(project=None, env=None, runtime=None):
+-    return merge_settings(DEFAULTS, runtime, read_environment(env or {}), project)
++    return merge_settings(DEFAULTS, _normalize(project), read_environment(env or {}), _normalize(runtime))
