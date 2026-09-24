@@ -13,3 +13,4 @@ test-results/
 .codebase-memory/
 *.egg-info/
 .DS_Store
+output
